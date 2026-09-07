@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:amqp="http://www.mulesoft.org/schema/mule/amqp" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/amqp http://www.mulesoft.org/schema/mule/amqp/current/mule-amqp.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="865db894-5d96-4f9a-bf57-38f7126dc27b" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="a58953b4-dbff-4687-b97c-8b63146b9a16" >
+		<db:my-sql-connection host="localhost" port="3306" user="root" password="Admin@123" database="order_management" />
+	</db:config>
+	<amqp:config name="AMQP_Config" doc:name="AMQP Config" doc:id="2eb7a50b-d949-4c7d-a4f4-b481b7635b13" >
+		<amqp:connection host="localhost" port="5672" username="guest" password="guest" >
+			<amqp:fallback-addresses />
+		</amqp:connection>
+	</amqp:config>
+	<flow name="order-invoiceFlow" doc:id="52a11fcf-0b3d-4beb-842f-b830381b8716" >
+		<http:listener doc:name="Listener" doc:id="cd1bd749-9784-47c0-a5ff-d836aaecf968" config-ref="HTTP_Listener_config" path="/orders"/>
+		<db:select doc:name="Select" doc:id="7bb5f6fc-14e7-4c46-8186-443f36f53188" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM orders;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="459fd58c-e992-4c47-96d7-cb667a15ccb5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (order) -> do {
+    var subtotal = order.quantity * order.unit_price
+    var discount = if (subtotal > 10000) subtotal * 0.10 else 0
+    var totalAmount = subtotal - discount
+    ---
+    {
+        invoice: {
+            orderId: order.order_id,
+            customerName: order.customer_name,
+            customerEmail: order.customer_email,
+            productId: order.product_id,
+            productName: order.product_name,
+            quantity: order.quantity,
+            unitPrice: order.unit_price,
+            subtotal: subtotal,
+            discount: discount,
+            totalAmount: totalAmount,
+            orderStatus: order.order_status
+        }
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="order-invoiceFlow1" doc:id="5984b799-6f12-484f-9de8-399cf10e0066" >
+		<amqp:listener doc:name="Listener" doc:id="692a02bc-30f5-4cac-b173-2ff4c6601ebb" config-ref="AMQP_Config" queueName="order.created" numberOfConsumers="1" inboundContentType="application/json" inboundEncoding="UTF-8"/>
+		<logger level="INFO" doc:name="Logger" doc:id="19fe6fad-501e-454c-8298-514295b6f25d" message="RABBITMQ RECEIVED: #[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="e638d6f4-f949-4cec-b3c1-74080e03fda1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+
+var quantity = payload.quantity as Number
+var unitPrice = payload.unitPrice as Number
+var subtotal = quantity * unitPrice
+var discount = if (subtotal > 10000) subtotal * 0.10 else 0
+var totalAmount = subtotal - discount
+
+---
+{
+    invoice: {
+        orderId: payload.orderId,
+        customerName: payload.customerName,
+        customerEmail: payload.customerEmail,
+        productId: payload.productId,
+        productName: payload.productName,
+        quantity: quantity,
+        unitPrice: unitPrice,
+        subtotal: subtotal,
+        discount: discount,
+        totalAmount: totalAmount
+    }
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>
