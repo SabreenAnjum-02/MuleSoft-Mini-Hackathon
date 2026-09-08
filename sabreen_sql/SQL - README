@@ -1,0 +1,432 @@
+Luxury Clothing Database
+A MySQL database project for managing a luxury clothing catalog, including product categories, brands, pricing, materials, sizes, colors, and inventory stock.
+
+This project is designed as a structured relational database for a luxury fashion e-commerce application.	          
+
+📌 Project Overview
+The Luxury Clothing Database organizes clothing products into separate categories for Women and Men.
+
+Each product contains:
+
+Product ID
+Category
+Product name
+Price
+Material
+Brand
+Each product can have multiple variants based on:
+
+Size
+Color
+Stock quantity
+The database uses primary keys, foreign keys, and unique constraints to maintain data integrity.
+
+🗂️ Database Structure
+Database Name
+luxury_clothing
+
+Main Category Table
+The categories table stores the available clothing categories.
+
+Category ID	Category	Gender	Minimum Price	Maximum Price
+CAT001	Tops	Women	₹500	₹15,000
+CAT002	T-Shirts	Women	₹400	₹12,000
+CAT003	Dresses	Women	₹800	₹30,000
+CAT004	Jeans	Women	₹600	₹18,000
+CAT005	Kurti	Women	₹500	₹15,000
+CAT006	Jackets	Women	₹1,000	₹40,000
+CAT007	Shirts	Men	₹500	₹20,000
+CAT008	Pants	Men	₹600	₹20,000
+CAT009	Jackets	Men	₹1,000	₹40,000
+CAT010	Sweatshirts	Men	₹700	₹18,000
+CAT011	Hoodies	Men	₹700	₹20,000
+
+👗 Women's Products
+The database contains the following women's clothing categories:
+
+Tops
+Table: women_tops
+
+Brands included:
+
+Gucci
+Prada
+Dior
+Products:
+
+Product ID	Product	Price	Material	Brand
+WT001	Royal Silk Top	₹8,500	Pure Silk	Gucci
+WT002	Luxury Cashmere Top	₹12,000	Cashmere	Prada
+WT003	Designer Satin Top	₹9,500	Satin	Dior
+
+Variants are stored in:
+
+women_tops_variants
+
+T-Shirts
+Table: women_tshirts
+
+Product ID	Product	Price	Material	Brand
+WTS001	Luxury Cotton T-Shirt	₹6,500	Premium Cotton	Gucci
+WTS002	Signature Logo T-Shirt	₹8,500	Organic Cotton	Prada
+WTS003	Silk Blend T-Shirt	₹10,000	Silk Blend	Dior
+
+Variants are stored in:
+
+women_tshirts_variants
+
+Dresses
+Table: women_dresses
+
+Product ID	Product	Price	Material	Brand
+WD001	Royal Evening Gown	₹18,000	Silk	Dior
+WD002	Luxury Velvet Dress	₹22,000	Velvet	Prada
+WD003	Designer Satin Dress	₹15,000	Satin	Gucci
+
+Variants are stored in:
+
+women_dresses_variants
+
+Jeans
+Table: women_jeans
+
+Product ID	Product	Price	Material	Brand
+WJ001	Premium Slim Fit Jeans	₹7,500	Denim	Gucci
+WJ002	Luxury Straight Leg Jeans	₹9,000	Stretch Denim	Prada
+WJ003	Designer High Waist Jeans	₹10,500	Premium Denim	Dior
+
+Variants are stored in:
+
+women_jeans_variants
+
+Kurti
+Table: women_kurti
+
+Product ID	Product	Price	Material	Brand
+WK001	Royal Embroidered Kurti	₹7,500	Cotton Silk	Gucci
+WK002	Luxury Anarkali Kurti	₹9,500	Chanderi Silk	Prada
+WK003	Designer Printed Kurti	₹6,500	Pure Cotton	Dior
+
+Variants are stored in:
+
+women_kurti_variants
+
+Jackets
+Table: women_jackets
+
+Product ID	Product	Price	Material	Brand
+WJKT001	Luxury Leather Jacket	₹28,000	Genuine Leather	Gucci
+WJKT002	Designer Wool Jacket	₹22,000	Premium Wool	Prada
+WJKT003	Elegant Velvet Jacket	₹18,000	Velvet	Dior
+
+Variants are stored in:
+
+women_jackets_variants
+
+👔 Men's Products
+The database contains the following men's clothing categories:
+
+Shirts
+Table: men_shirts
+
+Product ID	Product	Price	Material	Brand
+MS001	Royal Oxford Shirt	₹8,500	Egyptian Cotton	Gucci
+MS002	Luxury Silk Shirt	₹15,000	Pure Silk	Prada
+MS003	Designer Linen Shirt	₹11,000	Premium Linen	Dior
+
+Variants are stored in:
+
+men_shirts_variants
+
+Pants
+Table: men_pants
+
+Product ID	Product	Price	Material	Brand
+MP001	Premium Tailored Trousers	₹9,000	Wool Blend	Gucci
+MP002	Luxury Slim Fit Pants	₹10,500	Premium Cotton	Prada
+MP003	Designer Formal Pants	₹12,000	Italian Wool	Dior
+
+Variants are stored in:
+
+men_pants_variants
+
+Jackets
+Table: men_jackets
+
+Product ID	Product	Price	Material	Brand
+MJKT001	Luxury Leather Jacket	₹30,000	Genuine Leather	Gucci
+MJKT002	Designer Wool Jacket	₹24,000	Premium Wool	Prada
+MJKT003	Signature Bomber Jacket	₹18,000	Premium Nylon	Dior
+
+Variants are stored in:
+
+men_jackets_variants
+
+Sweatshirts
+Table: men_sweatshirts
+
+Product ID	Product	Price	Material	Brand
+MSW001	Luxury Cashmere Sweatshirt	₹12,000	Cashmere Blend	Gucci
+MSW002	Designer Cotton Sweatshirt	₹9,500	Premium Cotton	Prada
+MSW003	Signature Wool Sweatshirt	₹14,000	Merino Wool	Dior
+
+Variants are stored in:
+
+men_sweatshirts_variants
+
+Hoodies
+Table: men_hoodies
+
+Product ID	Product	Price	Material	Brand
+MH001	Luxury Cashmere Hoodie	₹15,000	Cashmere Blend	Gucci
+MH002	Designer Cotton Hoodie	₹11,000	Premium Cotton	Prada
+MH003	Signature Wool Hoodie	₹18,000	Merino Wool	Dior
+
+Variants are stored in:
+
+men_hoodies_variants
+
+🎨 Product Variants
+Every product has a corresponding variant table.
+
+For example:
+
+women_tops
+      │
+      │ product_id
+      ▼
+women_tops_variants
+
+A variant contains:
+
+Column	Description
+variant_id	Unique identifier for the variant
+product_id	Product associated with the variant
+size	Available clothing size
+color	Available color
+stock_quantity	Number of units currently available
+
+Available Sizes
+S
+M
+L
+
+Women's Colors
+Most women's products use:
+
+Black
+White
+Red
+
+Women's jeans use:
+
+Black
+White
+Blue
+
+Men's Colors
+Men's products generally use:
+
+Black
+White
+Blue
+
+🏗️ Database Relationships
+The database follows a simple relational structure:
+
+                    ┌──────────────┐
+                    │  categories  │
+                    └──────┬───────┘
+                           │
+                 category_id (FK)
+                           │
+          ┌────────────────┴────────────────┐
+          │                                 │
+   Product Tables                     Product Tables
+     (Women)                              (Men)
+          │                                 │
+          │ product_id                      │ product_id
+          ▼                                 ▼
+   Variant Tables                     Variant Tables
+
+Each product table has a foreign key referencing:
+
+categories.category_id
+
+Each variant table has a foreign key referencing its corresponding product table.
+
+🔑 Constraints
+The database uses several SQL constraints to maintain data integrity.
+
+Primary Keys
+Every product and variant has a unique primary key.
+
+Example:
+
+product_id VARCHAR(10) PRIMARY KEY
+
+and:
+
+variant_id VARCHAR(15) PRIMARY KEY
+
+Foreign Keys
+Products reference their category:
+
+FOREIGN KEY (category_id)
+REFERENCES categories(category_id)
+
+Variants reference their product:
+
+FOREIGN KEY (product_id)
+REFERENCES women_tops(product_id)
+
+Unique Constraint
+A product cannot have duplicate combinations of size and color:
+
+UNIQUE (product_id, size, color)
+
+This prevents duplicate variants such as:
+
+WT001 | M | Black
+WT001 | M | Black
+
+💾 Installation
+1. Install MySQL
+Install MySQL Server and a MySQL client such as MySQL Workbench.
+
+2. Create the Database
+Run:
+
+CREATE DATABASE luxury_clothing;
+
+USE luxury_clothing;
+
+3. Execute the SQL Script
+Run the complete SQL script provided in this project.
+
+The script will:
+
+Create the database.
+Create the categories table.
+Insert clothing categories.
+Create women's product tables.
+Create women's variant tables.
+Insert women's products and variants.
+Create men's product tables.
+Create men's variant tables.
+Insert men's products and variants.
+🔍 Example Queries
+Display all categories
+SELECT * FROM categories;
+
+Display all women's tops
+SELECT * FROM women_tops;
+
+Display all available variants for a product
+SELECT *
+FROM women_tops_variants
+WHERE product_id = 'WT001';
+
+Find products above ₹10,000
+SELECT *
+FROM women_tops
+WHERE price > 10000;
+
+Find products from Gucci
+SELECT *
+FROM women_tops
+WHERE brand = 'Gucci';
+
+Find products with available stock
+SELECT *
+FROM women_tops_variants
+WHERE stock_quantity > 0;
+
+Find all medium-sized black products
+SELECT *
+FROM women_tops_variants
+WHERE size = 'M'
+AND color = 'Black';
+
+📊 Project Statistics
+The database contains:
+
+1 database
+11 clothing categories
+33 products
+33 variant tables/products groups
+297 product variants
+3 luxury brands
+3 standard clothing sizes
+Multiple clothing materials and colors
+Brands
+Gucci
+Prada
+Dior
+
+Product Categories
+Women
+
+Tops
+T-Shirts
+Dresses
+Jeans
+Kurti
+Jackets
+
+Men
+
+Shirts
+Pants
+Jackets
+Sweatshirts
+Hoodies
+
+🛠️ Technologies Used
+MySQL
+SQL
+Relational Database Design
+Primary Keys
+Foreign Keys
+Unique Constraints
+DECIMAL data types
+VARCHAR data types
+Inventory management
+🎯 Purpose of the Project
+This project demonstrates fundamental relational database concepts through a realistic luxury fashion inventory system.
+
+It can be used as a foundation for:
+
+E-commerce applications
+Inventory management systems
+Fashion store databases
+SQL learning projects
+Database management projects
+Backend development projects
+🚀 Future Improvements
+The database can be extended with additional tables for:
+
+Customers
+Orders
+Order items
+Shopping carts
+Payments
+Addresses
+Product reviews
+Wishlists
+Discounts
+Coupons
+Suppliers
+Employees
+Purchase history
+Product images
+Delivery tracking
+A future version could also consolidate the individual product tables into a single products table, which would make searching and reporting across all categories easier.
+
+👨‍💻 Author
+Luxury Clothing Database Project
+
+Built using MySQL and SQL for learning and database management purposes.
+
+📄 License
+This project is intended for educational and demonstration purposes.
