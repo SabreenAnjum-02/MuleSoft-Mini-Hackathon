@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd
+		http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+
+	<munit:config name="order_mangemnt-test-suite.xml" />
+	
+	<http:request-config name="HTTP_Request_Test_configuration" doc:name="HTTP Request configuration" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+
+	<munit:test name="order-processing-success-test" doc:id="success-test" description="Test successful order processing with discount">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event">
+				<munit:payload value='{"customerId": "CUST001", "productId": "PROD123", "quantity": 1}' mediaType="application/json" />
+			</munit:set-event>
+			<http:request method="POST" doc:name="Request" config-ref="HTTP_Request_Test_configuration" path="/api/orders"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that success is true" expression="#[payload.success]" is="#[munittools::equalTo(true)]" />
+			<munit-tools:assert-that doc:name="Assert discount applied" expression="#[payload.orderDetails.discount]" is="#[munittools::equalTo(4500)]" />
+		</munit:validation>
+	</munit:test>
+	
+	<munit:test name="order-processing-validation-failure-test" doc:id="validation-failure-test" description="Test validation failure" expectedErrorType="HTTP:BAD_REQUEST">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event">
+				<munit:payload value='{"customerId": "CUST001", "quantity": 1}' mediaType="application/json" />
+			</munit:set-event>
+			<http:request method="POST" doc:name="Request" config-ref="HTTP_Request_Test_configuration" path="/api/orders"/>
+		</munit:execution>
+	</munit:test>
+
+	<munit:test name="order-processing-insufficient-stock-test" doc:id="insufficient-stock-test" description="Test insufficient stock failure" expectedErrorType="HTTP:BAD_REQUEST">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event">
+				<munit:payload value='{"customerId": "CUST001", "productId": "PROD456", "quantity": 10}' mediaType="application/json" />
+			</munit:set-event>
+			<http:request method="POST" doc:name="Request" config-ref="HTTP_Request_Test_configuration" path="/api/orders"/>
+		</munit:execution>
+	</munit:test>
+
+	<munit:test name="order-processing-product-not-found-test" doc:id="product-not-found-test" description="Test product not found failure" expectedErrorType="HTTP:NOT_FOUND">
+		<munit:execution >
+			<munit:set-event doc:name="Set Event">
+				<munit:payload value='{"customerId": "CUST001", "productId": "UNKNOWN", "quantity": 1}' mediaType="application/json" />
+			</munit:set-event>
+			<http:request method="POST" doc:name="Request" config-ref="HTTP_Request_Test_configuration" path="/api/orders"/>
+		</munit:execution>
+	</munit:test>
+
+</mule>
