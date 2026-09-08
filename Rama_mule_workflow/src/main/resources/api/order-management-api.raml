@@ -1,0 +1,62 @@
+#%RAML 1.0
+title: Order Management API
+version: v1
+baseUri: http://localhost:8081/api
+
+types:
+  OrderRequest:
+    type: object
+    properties:
+      customerId: string
+      productId: string
+      quantity: integer
+  
+  OrderResponse:
+    type: object
+    properties:
+      success: boolean
+      message: string
+      orderDetails?:
+        type: object
+        properties:
+          customerId: string
+          productId: string
+          quantity: integer
+          subtotal: number
+          discount: number
+          totalAmount: number
+          status: string
+
+/orders:
+  post:
+    description: Create a new order
+    body:
+      application/json:
+        type: OrderRequest
+        example:
+          customerId: "CUST001"
+          productId: "PROD123"
+          quantity: 1
+    responses:
+      200:
+        body:
+          application/json:
+            type: OrderResponse
+      400:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "APP:INVALID_INPUT",
+                "message": "Invalid request: productId and valid quantity are required."
+              }
+      404:
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "PRODUCT_NOT_FOUND",
+                "message": "The requested product could not be found."
+              }
