@@ -1,0 +1,78 @@
+#%RAML 1.0
+title: Order Management API
+version: v1
+mediaType: application/json
+
+/api/orders:
+  post:
+    description: Creates a new order, checks luxury stock, calculates discounts, and triggers a notification.
+    body:
+      application/json:
+        example: |
+          {
+            "customerId": "CUST999",
+            "productId": "PROD123",
+            "quantity": 2
+          }
+    responses:
+      200:
+        description: Order successfully created and notification sent.
+        body:
+          application/json:
+            example: |
+              {
+                "success": true,
+                "message": "Luxury Fashion Order processed successfully",
+                "orderDetails": {
+                  "customerId": "CUST999",
+                  "productId": "PROD123",
+                  "productName": "Italian Silk Tuxedo",
+                  "quantity": 2,
+                  "subtotal": 90000,
+                  "discount": 9000,
+                  "totalAmount": 81000,
+                  "status": "CREATED",
+                  "orderId": "LUX-ORD-123e4567-e89b-12d3-a456-426614174000"
+                }
+              }
+      400:
+        description: Validation failed (missing customerId, productId, or negative quantity).
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "APP:INVALID_INPUT",
+                "message": "Invalid request: customerId, productId, and a positive quantity are required."
+              }
+      404:
+        description: The requested product ID does not exist in the catalog.
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "PRODUCT_NOT_FOUND",
+                "message": "The requested luxury product could not be found in our catalog."
+              }
+      500:
+        description: A general server error or insufficient stock.
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "INTERNAL_SERVER_ERROR",
+                "message": "Insufficient luxury boutique stock available for the requested product."
+              }
+      503:
+        description: An upstream system (Product, Order, or Notification API) is unavailable.
+        body:
+          application/json:
+            example: |
+              {
+                "success": false,
+                "errorType": "UPSTREAM_API_FAILURE",
+                "message": "An external service is currently unavailable. Please try again later.",
+                "details": "timeout"
+              }
